@@ -22,9 +22,15 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect('mongodb+srv://Monish:Monish21@cluster0.mtbgshr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+const uri = 'mongodb+srv://Monish:Monish21@cluster0.mtbgshr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
-});
+// Connect to MongoDB
+mongoose.connect(uri)
+  .then(() => {
+    console.log('Connected to MongoDB');
+    initializeDatabase(); // Initialize database and collection
+  })
+  .catch((error) => console.error('Error connecting to MongoDB:', error));
 
 // Route to create a new event and generate QR codes
 app.post('/admin/create-event', async (req, res) => {
@@ -95,6 +101,13 @@ app.post('/user/download', async (req, res) => {
     res.send({ success: false, message: 'Error downloading QR code.' });
   }
 });
+
+async function initializeDatabase() {
+  const db = mongoose.connection.useDb('amb'); // Use 'amb' database
+  await db.createCollection('events'); // Create 'events' collection if it doesn't exist
+  console.log('Database and collection initialized');
+}
+
 
 // Start server
 app.listen(5000, () => console.log('Server running on port 5000'));
