@@ -8,10 +8,7 @@ const Admin = require('./models/Admin');  // Assuming the Admin model exists
 
 const app = express();
 
-app.use(cors({
-  origin: 'https://amb-events.vercel.app/', // Replace with your frontend URL if different
-  credentials: true, // Allow cookies to be sent
-}));
+app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());  // Initialize cookie-parser middleware
 
