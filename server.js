@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const QRCode = require('qrcode');
-const Admin = require('./models/Admin'); // Import the Admin model from models/Admin.js
+const Admin = require('./models/Admin');
 
 const app = express();
 
@@ -39,7 +39,9 @@ app.post('/admin/create-event', async (req, res) => {
 app.get('/admin/events', async (req, res) => {
   try {
     const admin = await Admin.findOne();
-    if (!admin) return res.status(404).send({ success: false, message: 'No events found.' });
+    if (!admin || admin.events.length === 0) {
+      return res.status(404).send({ success: false, message: 'No events found.' });
+    }
 
     res.send({ success: true, events: admin.events });
   } catch (error) {
@@ -65,7 +67,9 @@ app.post('/user/download', async (req, res) => {
 
     const existingDownload = event.downloads.find(download => download.deviceId === deviceId);
     if (existingDownload) {
-      return res.status(403).send({ success: false, message: 'You have already downloaded a ticket for this event from this device.' });
+      // Return the previously downloaded QR code for this device
+      const qrCodeUrl = event.ticketQRs[event.downloads.indexOf(existingDownload)].qrCodeUrl;
+      return res.status(200).send({ success: false, message: 'QR code already downloaded for this device.', qrCode: qrCodeUrl });
     }
 
     const qrIndex = event.downloadedCount;
