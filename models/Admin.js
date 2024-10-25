@@ -1,4 +1,3 @@
-// models/Admin.js
 const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({
@@ -10,7 +9,7 @@ const eventSchema = new mongoose.Schema({
 });
 
 const Admin = mongoose.model('Admin', {
-  events: [eventSchema]  
-},'amb');
+  events: [eventSchema]
+});
 
 module.exports = Admin;
