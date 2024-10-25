@@ -10,7 +10,7 @@ const eventSchema = new mongoose.Schema({
 });
 
 const Admin = mongoose.model('Admin', {
-  events: [eventSchema] // Array of events
-});
+  events: [eventSchema]  
+},'amb');
 
 module.exports = Admin;
