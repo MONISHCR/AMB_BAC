@@ -8,7 +8,14 @@ const Admin = require('./models/Admin');  // Assuming the Admin model exists
 
 const app = express();
 
-app.use(cors());
+// CORS Configuration
+app.use(cors({
+  origin: 'https://amb-events.vercel.app', // Replace with your frontend URL
+  credentials: true, // Allow cookies to be sent
+  methods: ['GET', 'POST'], // Explicitly allow methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow required headers
+}));
+
 app.use(bodyParser.json());
 app.use(cookieParser());  // Initialize cookie-parser middleware
 
@@ -103,7 +110,12 @@ app.post('/user/download', async (req, res) => {
 
     // Store the QR code in a cookie for 30 days
     const updatedDownloads = { ...downloadedEvents, [eventName]: qrCodeUrl };
-    res.cookie('downloadedEvents', updatedDownloads, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+    res.cookie('downloadedEvents', updatedDownloads, {
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      httpOnly: true, // Not accessible to JavaScript
+      secure: true, // Set to true if using HTTPS
+      sameSite: 'none', // Allow cross-origin requests
+    });
 
     res.send({ success: true, qrCode: qrCodeUrl });
   } catch (error) {
